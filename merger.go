@@ -57,9 +57,11 @@ func summarizeSummary(summary string, gptAuth string) (string, error) {
 		"summarize the following summary in a neutral tone,",
 		"format the output in markdown",
 		"start each section with a header which includes the file name and the type of change",
-		"add an overall quality summary at the end",
-		summary,
 	}
+	if *qualitative {
+		prompt = append(prompt, "add an overall quality summary at the end")
+	}
+	prompt = append(prompt, summary)
 	promptString := strings.Join(prompt, "\n")
 	return getFromGPT(promptString, gptAuth)
 }
@@ -68,6 +70,7 @@ func chunkToSummary(chunk Chunk, gptAuth string) (string, error) {
 	prompt := []string{
 		"summarize the following diffs in a neutral tone, do not refer to the author,",
 		"include the actual file names where appropriate",
+		"do not include the actual code changes unless needed for clarity",
 		"format the output in markdown",
 		"start each section with a header which includes the file name and the type of change",
 	}
@@ -168,11 +171,11 @@ func getPRDetail(owner string, repo string, pr string) (PRDetail, error) {
 // add go standard command line args
 // using the flags library
 // https://golang.org/pkg/flag/
-var repoOwner = flag.String("owner", "aws", "The owner of the repository")
-var repoName = flag.String("repo", "aws-lambda-go", "The name of the repository")
-var prNumber = flag.String("pr", "544", "The pull request number")
+var repoOwner = flag.String("owner", "mdcfrancis", "The owner of the repository")
+var repoName = flag.String("repo", "merge-summary-go", "The name of the repository")
+var prNumber = flag.String("pr", "1", "The pull request number")
 var gptAuth = flag.String("gpt", os.Getenv("GPT_AUTH"), "The GPT API key (not recommended, use environment")
-var qualitative = flag.Bool("qualative", false, "Use qualitative summarization")
+var qualitative = flag.Bool("qualitative", false, "Use qualitative summarization")
 
 func main() {
 	flag.Parse()
@@ -188,7 +191,6 @@ func main() {
 	fmt.Println("Number:", detail.Number)
 	fmt.Println("State:", detail.State)
 	fmt.Println("Title:", detail.Title)
-	//fmt.Println("Body:", detail.Body)
 	fmt.Println("URL:", detail.URL)
 	fmt.Println("Diff URL:", detail.DiffURL)
 

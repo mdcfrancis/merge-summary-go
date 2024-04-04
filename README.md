@@ -3,7 +3,7 @@ Create a summary for a pull request based on the diffs in the pull request.
 
 ## Usage
 ```bash
-go run main.go -owver <owner> -repo <repo> -pr <pr>
+go run main.go -owner <owner> -repo <repo> -pr <pr>
 
 Usage of merger:
   -gpt string
@@ -14,8 +14,34 @@ Usage of merger:
     	The pull request number (default "544")
   -repo string
     	The name of the repository (default "aws-lambda-go")
+  -qualitative
+    	Include a qualitative analysis of the changes
 ```
 # Copyright for examples remains with the original authors
+## Example MD for mdcfrancis/merge-summary-go pull 1
+# File: `merger.go` - Modifications
+
+Several updates were made to `merger.go` largely aimed at enhancing summarization of changes.
+
+## Function: 'chunkToSummary'
+
+The 'chunkToSummary' function underwent a few alterations. Programmer comments were removed and the presentation of the 'prompt' variable has been changed.
+
+## New Functions: 'getFromGPT' and 'summarizeSummary'
+
+Two new functions were incorporated, 'getFromGPT' and 'summarizeSummary'. 'getFromGPT' takes over fetching data from the GPT API, which was previously a part of the 'chunkToSummary' function. 'SummarizeSummary', on the other hand, builds a 'prompt' variable by summarizing an existing summary, with the aim to offer a GPT API response later on.
+
+## Modification: Prompt setup change in 'chunkToSummary'
+
+The prompt setup in the 'chunkToSummary' function was updated to optionally allow a quality analysis of the amendments.
+
+## Script-Level Changes
+
+At the script's top level, a new 'qualitative' flag has been added that dictates whether a qualitative summary is provided or not. The 'body' variable's display in the main function is now commented, and the 'chunkToSummary' function has been superseded by 'summarizeSummary'.
+
+# Quality Analysis
+
+The updates made to the `merger.go` file have been intended to improve the processes of fetching data and summarizing changes. With the cleaned coder comments and new functions, the file is expected to perform more effectively. The quality analysis inclusion in the summary provides deeper insight into the changes. However, the functionality and impact of commenting out the 'body' variable display are yet to be evaluated.
 
 ## Example MD for aws/aws-lambda-go pull 544 
 
@@ -27,41 +53,3 @@ In `requestRecord` struct, a new `xrayCauses` field has been added to keep track
 In `lambda/runtime_api_client.go`, two new constants: `headerXRayErrorCause` and `xrayErrorCauseMaxSize` were added. Modifications have been made to the `success` and `failure` methods within the `invoke` type, accepting two new parameters `nil` and `causeForXRay`. The `post` method accepts an additional parameter `xrayErrorCause`, setting it in the request header if it's length is less than `xrayErrorCauseMaxSize` and not `nil`.
 
 The changes in the `lambda/runtime_api_client_test.go` include adjusting several function calls to adapt to aforementioned `invoke.failure` function modification, impacting multiple test cases including `TestClientDoneAndError`, `TestInvalidRequestsForMalformedEndpoint`, and `TestStatusCodes`. The assertion checks within these tests remain the same.
-
-## example for 
-```bash
-go run merger.go -owner ml-explore -repo mlx -pr 953 
-# log output
-```
-
-## Example MD for ml-explore/mlx pull 953
-
-- Apple Inc's copyright was updated to span from 2023 to 2024.
-- A new `typename` `AccT` was introduced in `softmax` function.
-- Logic was added to handle when `T` and `AccT` are not equal, checked by `std::is_same`.
-- Multiple assignments were adjusted based on whether `T` and `AccT` are equal.
-- In the `eval_cpu` function, an additional condition checks `precise_` variable and calls different `softmax` functions accordingly.
-
-In the `mlx/backend/metal/kernels/softmax.metal` file, several changes took place:
-
-- The `SOFTMAX_N_READS` template was updated to include `typename` `AccT` and `threadgroup` types were changed from `T` to `AccT`.
-- Adjustments were made inside `softmax_single_row` and `softmax_looped` functions to use `AccT` instead of `T`.
-- Output calculations inside `softmax_single_row` and `softmax_looped` functions were cast to `T` type.
-- An extra definition for `instantiate_softmax_precise` was added for `half` and `bfloat16_t` data types.
-
-In 'softmax.cpp' of the backend metal folder in the `mlx` project, if `dtype` of input is not `float32` and `precise_` is `true`, `precise_` is added to `op_name`.
-
-In the `mlx/fast.cpp` file, changes in the `scaled_dot_product_attention` function simplified the creation of `scores` variable.
-
-In `mlx/ops.cpp` file, a boolean parameter `precise` was added to the `softmax` function, and logic was added to handle when `precise` is `true`.
-
-In the `mlx/ops.h` file, a boolean parameter `precise` was added to the `softmax` function definition.
-
-Modifications in `mlx/primitives.cpp` involved changes in Softmax function's `vmap()` and `jvp()` method implementations and addition of a new method, `is_equivalent()`.
-
-In `mlx/primitives.h`, modifications were made in the Softmax class, with the addition of `precise_`, a boolean parameter in the constructor and `is_equivalent()` function.
-
-In the `python/src/ops.cpp` file, changes were made to the `init_ops` function to introduce a `precise` parameter to the `softmax` function.
-
-In `test_ops.py`, tests evaluating the precision of the softmax function for `mx.float16` and `mx.bfloat16` types were added.
-
