@@ -9,13 +9,13 @@ Usage of merger:
   -gpt string
     	The GPT API key (not recommended, use environment variable GPT_AUTH)
   -owner string
-    	The owner of the repository (default "aws")
+    	The owner of the repository (default "mdcfrancis")
   -pr string
-    	The pull request number (default "544")
-  -repo string
-    	The name of the repository (default "aws-lambda-go")
+    	The pull request number (default "1")
   -qualitative
-    	Include a qualitative analysis of the changes
+    	Use qualitative summarization
+  -repo string
+    	The name of the repository (default "merge-summary-go")
 ```
 # Copyright for examples remains with the original authors
 ## Example MD for mdcfrancis/merge-summary-go pull 1
