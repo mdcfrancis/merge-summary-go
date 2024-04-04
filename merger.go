@@ -30,13 +30,7 @@ type Chunk struct {
 	Content string
 }
 
-// const basePrompt = "summarize the following in a concise manner make it sound like you are the author:\n\n%s\n"
-const basePrompt = "summarize the following in a neutral tone, do not refer to the author, include the actual file names, " +
-	"use markdown to make the comment clear:\n\n%s\n"
-
-func chunkToSummary(chunk Chunk, gptAuth string) (string, error) {
-	prompt := fmt.Sprintf(basePrompt, chunk.Content)
-
+func getFromGPT(prompt string, gptAuth string) (string, error) {
 	client := openai.NewClient(gptAuth)
 	log.Println("getting answer from GPT :", len(prompt), "characters")
 	resp, err := client.CreateChatCompletion(
@@ -57,6 +51,33 @@ func chunkToSummary(chunk Chunk, gptAuth string) (string, error) {
 	content := resp.Choices[0].Message.Content
 	//fmt.Println(content)
 	return content, nil
+}
+func summarizeSummary(summary string, gptAuth string) (string, error) {
+	prompt := []string{
+		"summarize the following summary in a neutral tone,",
+		"format the output in markdown",
+		"start each section with a header which includes the file name and the type of change",
+		"add an overall quality summary at the end",
+		summary,
+	}
+	promptString := strings.Join(prompt, "\n")
+	return getFromGPT(promptString, gptAuth)
+}
+
+func chunkToSummary(chunk Chunk, gptAuth string) (string, error) {
+	prompt := []string{
+		"summarize the following diffs in a neutral tone, do not refer to the author,",
+		"include the actual file names where appropriate",
+		"format the output in markdown",
+		"start each section with a header which includes the file name and the type of change",
+	}
+	if *qualitative {
+		prompt = append(prompt, "Add a short quality analysis of the changes as a separate section")
+	}
+	prompt = append(prompt, chunk.Content)
+	promptString := strings.Join(prompt, "\n")
+
+	return getFromGPT(promptString, gptAuth)
 }
 
 func splitDiff(closer io.ReadCloser) ([]Chunk, error) {
@@ -151,6 +172,7 @@ var repoOwner = flag.String("owner", "aws", "The owner of the repository")
 var repoName = flag.String("repo", "aws-lambda-go", "The name of the repository")
 var prNumber = flag.String("pr", "544", "The pull request number")
 var gptAuth = flag.String("gpt", os.Getenv("GPT_AUTH"), "The GPT API key (not recommended, use environment")
+var qualitative = flag.Bool("qualative", false, "Use qualitative summarization")
 
 func main() {
 	flag.Parse()
@@ -166,7 +188,7 @@ func main() {
 	fmt.Println("Number:", detail.Number)
 	fmt.Println("State:", detail.State)
 	fmt.Println("Title:", detail.Title)
-	fmt.Println("Body:", detail.Body)
+	//fmt.Println("Body:", detail.Body)
 	fmt.Println("URL:", detail.URL)
 	fmt.Println("Diff URL:", detail.DiffURL)
 
@@ -184,8 +206,8 @@ func main() {
 		summaries = append(summaries, summary)
 	}
 
-	chunk := strings.Join(summaries, "\n")
-	summary, err := chunkToSummary(Chunk{Content: chunk}, *gptAuth)
+	grouped := strings.Join(summaries, "\n")
+	summary, err := summarizeSummary(grouped, *gptAuth)
 	if err != nil {
 		log.Fatal(err)
 	}
