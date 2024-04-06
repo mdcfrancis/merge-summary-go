@@ -1,16 +1,14 @@
-package main
+package internal
 
 import (
 	"bufio"
 	"context"
 	"encoding/json"
-	"flag"
 	"fmt"
 	"github.com/sashabaranov/go-openai"
 	"io"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 )
 
@@ -30,13 +28,18 @@ type Chunk struct {
 	Content string
 }
 
-func getFromGPT(prompt string, gptAuth string) (string, error) {
-	client := openai.NewClient(gptAuth)
+type Config struct {
+	Qualitative bool
+	GptAuth     string
+}
+
+func (cfg *Config) getFromGPT(prompt string) (string, error) {
+	client := openai.NewClient(cfg.GptAuth)
 	log.Println("getting answer from GPT :", len(prompt), "characters")
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model: openai.GPT4, //openai.GPT4, //3Dot5Turbo,
+			Model: openai.GPT4Turbo1106, //openai.GPT4, //3Dot5Turbo,
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleUser,
@@ -52,21 +55,21 @@ func getFromGPT(prompt string, gptAuth string) (string, error) {
 	//fmt.Println(content)
 	return content, nil
 }
-func summarizeSummary(summary string, gptAuth string) (string, error) {
+func (cfg *Config) SummarizeSummary(summary string) (string, error) {
 	prompt := []string{
 		"summarize the following summary in a neutral tone,",
 		"format the output in markdown",
 		"start each section with a header which includes the file name and the type of change",
 	}
-	if *qualitative {
+	if cfg.Qualitative {
 		prompt = append(prompt, "add an overall quality summary at the end")
 	}
 	prompt = append(prompt, summary)
 	promptString := strings.Join(prompt, "\n")
-	return getFromGPT(promptString, gptAuth)
+	return cfg.getFromGPT(promptString)
 }
 
-func chunkToSummary(chunk Chunk, gptAuth string) (string, error) {
+func (cfg *Config) ChunkToSummary(chunk Chunk) (string, error) {
 	prompt := []string{
 		"summarize the following diffs in a neutral tone, do not refer to the author,",
 		"include the actual file names where appropriate",
@@ -74,13 +77,13 @@ func chunkToSummary(chunk Chunk, gptAuth string) (string, error) {
 		"format the output in markdown",
 		"start each section with a header which includes the file name and the type of change",
 	}
-	if *qualitative {
+	if cfg.Qualitative {
 		prompt = append(prompt, "Add a short quality analysis of the changes as a separate section")
 	}
 	prompt = append(prompt, chunk.Content)
 	promptString := strings.Join(prompt, "\n")
 
-	return getFromGPT(promptString, gptAuth)
+	return cfg.getFromGPT(promptString)
 }
 
 func splitDiff(closer io.ReadCloser) ([]Chunk, error) {
@@ -119,7 +122,7 @@ func splitDiff(closer io.ReadCloser) ([]Chunk, error) {
 	return chunks, nil
 }
 
-func getDiff(owner string, repo string, pr string) ([]Chunk, error) {
+func (cfg *Config) GetDiff(owner string, repo string, pr string) ([]Chunk, error) {
 	mediaTypeDiff := "application/vnd.github.v3.diff"
 	// set a media type for the diff
 	req, err := http.NewRequest("GET", "https://api.github.com/repos/"+owner+"/"+repo+"/pulls/"+pr, nil)
@@ -138,7 +141,7 @@ func getDiff(owner string, repo string, pr string) ([]Chunk, error) {
 	return splitDiff(resp.Body)
 }
 
-func getPRDetail(owner string, repo string, pr string) (PRDetail, error) {
+func (cfg *Config) GetPRDetail(owner string, repo string, pr string) (PRDetail, error) {
 	mediaType := "application/vnd.github.v3+json"
 	req, err := http.NewRequest("GET", "https://api.github.com/repos/"+owner+"/"+repo+"/pulls/"+pr, nil)
 	if err != nil {
@@ -166,52 +169,4 @@ func getPRDetail(owner string, repo string, pr string) (PRDetail, error) {
 		return prDetail, fmt.Errorf("PR not found")
 	}
 	return prDetail, nil
-}
-
-// add go standard command line args
-// using the flags library
-// https://golang.org/pkg/flag/
-var repoOwner = flag.String("owner", "mdcfrancis", "The owner of the repository")
-var repoName = flag.String("repo", "merge-summary-go", "The name of the repository")
-var prNumber = flag.String("pr", "1", "The pull request number")
-var gptAuth = flag.String("gpt", os.Getenv("GPT_AUTH"), "The GPT API key (not recommended, use environment")
-var qualitative = flag.Bool("qualitative", false, "Use qualitative summarization")
-
-func main() {
-	flag.Parse()
-	log.Println("owner:", *repoOwner)
-	log.Println("repo:", *repoName)
-	log.Println("pr:", *prNumber)
-
-	detail, err := getPRDetail(*repoOwner, *repoName, *prNumber)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("PR Detail:")
-	fmt.Println("Number:", detail.Number)
-	fmt.Println("State:", detail.State)
-	fmt.Println("Title:", detail.Title)
-	fmt.Println("URL:", detail.URL)
-	fmt.Println("Diff URL:", detail.DiffURL)
-
-	chunks, err := getDiff(*repoOwner, *repoName, *prNumber)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	summaries := []string{}
-	for _, chunk := range chunks {
-		summary, err := chunkToSummary(chunk, *gptAuth)
-		if err != nil {
-			log.Fatal(err)
-		}
-		summaries = append(summaries, summary)
-	}
-
-	grouped := strings.Join(summaries, "\n")
-	summary, err := summarizeSummary(grouped, *gptAuth)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(summary)
 }
