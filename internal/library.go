@@ -111,7 +111,7 @@ func (cfg *Config) FileToSummary(chunk Chunk) (string, error) {
 	return cfg.getFromGPT(promptString)
 }
 
-func (cfg *Config) IndexPage(title string, summaries []string) (string, error) {
+func (cfg *Config) IndexPage(title string, doc string, summaries []string) (string, error) {
 	prompt := []string{
 		"repository name is " + title,
 		"summarize the following summaries in a neutral tone",
@@ -120,12 +120,19 @@ func (cfg *Config) IndexPage(title string, summaries []string) (string, error) {
 		"	File name: example.go",
 		"   Summary: This file contains the main logic for the application",
 		"output the following structure:",
+		"	- the repository name " + title,
 		"	- a brief summary of the repository, include important information such as the purpose of the repository, the main technologies used, and the main features",
 		"	- for each summary in the repository: ",
-		"		1) include a header with the file name and the type of change, ",
-		"		2) include a relative link to the file in the repository,",
-		"		3) include a relative link to the Doc File",
-		"	- include a link to the file in the header",
+		"		1) include a header with the file name",
+		"		2) include a link to the file in the repository ",
+		"		3) include a link to the Doc File, in the " + doc + " directory",
+		"for example the output file should look like :",
+		"# Repository example",
+		"	- This repository contains the main logic for the application...",
+		"## example.go",
+		"	- [View file in repository](https://github.com/example/example/example.go)",
+		"	- [View Doc File](https://github.com/example/example/doc/example.go.md)",
+		"	- This file contains the main logic for the application...",
 	}
 	prompt = append(prompt, summaries...)
 	promptString := strings.Join(prompt, "\n")
