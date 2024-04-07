@@ -86,6 +86,47 @@ func (cfg *Config) ChunkToSummary(chunk Chunk) (string, error) {
 	return cfg.getFromGPT(promptString)
 }
 
+func (cfg *Config) FileToSummary(chunk Chunk) (string, error) {
+	prompt := []string{
+		"summarize the following file in a neutral tone",
+		"do not refer to the AI model or the author",
+		"the first line is the file name",
+		"output in the following structure:",
+		"	report the file name",
+		"	report the language the file is written in",
+		"	explain the purpose of the file, be concise and to the point. Be assertive in your explanation",
+		"	explain most important parts of the file, include small code snippets if needed (include line number)",
+		"For example:",
+		"File name: example.go",
+		"Language: Go",
+		"Purpose: This file contains the main logic for the application",
+		"Important parts: The function `main` is the entry point of the application",
+		"File content:",
+	}
+	prompt = append(prompt, chunk.Content)
+	promptString := strings.Join(prompt, "\n")
+
+	return cfg.getFromGPT(promptString)
+}
+
+func (cfg *Config) IndexPage(title string, summaries []string) (string, error) {
+	prompt := []string{
+		"repository name is " + title,
+		"summarize the following summaries in a neutral tone",
+		"the summaries of the repository are provided in the following format:",
+		"	Doc File: example.go.md",
+		"	File name: example.go",
+		"   Summary: This file contains the main logic for the application",
+		"output the following structure:",
+		"	- a brief summary of the repository, include important information such as the purpose of the repository, the main technologies used, and the main features",
+		"	- for each summary in the repository, include a header with the file name and the type of change, including a link to the document and to the file",
+	}
+	prompt = append(prompt, summaries...)
+	promptString := strings.Join(prompt, "\n")
+
+	return cfg.getFromGPT(promptString)
+}
+
 func splitDiff(closer io.ReadCloser) ([]Chunk, error) {
 	var chunks []Chunk
 	var currentChunk Chunk

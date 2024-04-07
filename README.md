@@ -3,19 +3,27 @@ Create a summary for a pull request based on the diffs in the pull request.
 
 ## Usage
 ```bash
-go run main.go -owner <owner> -repo <repo> -pr <pr>
+merge-summary-go --help
 
-Usage of merger:
-  -gpt string
-    	The GPT API key (not recommended, use environment variable GPT_AUTH)
-  -owner string
-    	The owner of the repository (default "mdcfrancis")
-  -pr string
-    	The pull request number (default "1")
-  -qualitative
-    	Use qualitative summarization
-  -repo string
-    	The name of the repository (default "merge-summary-go")
+A set of tools to summarise PRs on GitHub.
+
+Usage:
+  merge-summary-go [command]
+
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  doc         Given a owner and repo name generate a summary document of the repo, use --output to specify the output directory
+  help        Help about any command
+  message     Gets the diffs from a PR and summarises them into a message
+
+Flags:
+  -a, --gpt-auth string   The GPT API key (not recommended, use environment (default from environment GPT_AUTH) 
+  -h, --help              help for merge-summary-go
+  -o, --owner string      The owner of the repository (default "mdcfrancis")
+  -r, --repo string       The name of the repository (default "merge-summary-go")
+
+Use "merge-summary-go [command] --help" for more information about a command.
+
 ```
 # Copyright for examples remains with the original authors
 ## Example MD for mdcfrancis/merge-summary-go pull 1
