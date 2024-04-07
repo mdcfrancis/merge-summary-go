@@ -1,32 +1,28 @@
 # cmd/message.go
 ## Language: Go
-## Purpose: 
-The file defines a command to summarize the differences introduced in a pull request (PR) into a concise message.
+## Purpose:
+This file defines a command-line command named "message" that retrieves changes from a pull request (PR) and produces a summary of the diffs.
 
 ## Important parts:
-- **Command Definition**: The `messageCmd` variable defines the structure and behavior of the `message` command using Cobra library (Lines 13-53).
-```go
-var messageCmd = &cobra.Command{
-	// ...
-}
-```
-- **Command Execution**: The `Run` function of `messageCmd` contains the logic that retrieves PR details, fetches diffs, and generates summaries (Lines 22-53).
-```go
-Run: func(cmd *cobra.Command, args []string) {
-	// ...
-},
-```
-- **Configuration**: The `cfg` instance of `internal.Config` is set up to pass configuration such as authentication and summarization preferences (Lines 25-30).
-- **Pull Request Details**: It retrieves and prints PR details like number, state, and URLs (Lines 32-39).
-- **Diff Processing**: Obtains the diff chunks from the PR and iterates over them to generate summaries (Lines 41-52).
-- **Command Registration**: The `init` function adds the `message` command to the `rootCmd` which is part of the application's command hierarchy (Lines 55-58).
-```go
-func init() {
-	rootCmd.AddCommand(messageCmd)
-	// ...
-}
-```
-- **Flag Definition**: A boolean flag `qualitative` is declared to determine the type of summarization to be used (Line 60).
-```go
-messageCmd.Flags().BoolVarP(&qualitative, "qualitative", "q", false, "Use qualitative summarization")
-```
+- Importing dependencies (lines 6-12):
+  ```go
+  import (
+      "com.github/mdcfrancis/merge-summary-go/internal"
+      "fmt"
+      "github.com/spf13/cobra"
+      "log"
+      "strings"
+  )
+  ```
+- Declaration of `messageCmd` using the `cobra` library (lines 14-48) sets up the "message" command with usage, description, arguments requirement, and the function to run when the command is executed. It fetches PR details and diffs, and consolidates them into a summary.
+  ```go
+  var messageCmd = &cobra.Command{...}
+  ```
+- Flag declaration for command `messageCmd` to include the option for qualitative summarization (lines 50-52).
+  ```go
+  messageCmd.Flags().BoolVarP(&qualitative, "qualitative", "q", false, "Use qualitative summarization")
+  ```
+- Registration of the new command to the root command within the `init` function, making `messageCmd` available for the command-line interface (lines 54-56).
+  ```go
+  rootCmd.AddCommand(messageCmd)
+  ```

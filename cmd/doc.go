@@ -92,7 +92,7 @@ var docCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		log.Println("Creating README.md")
-		summary, err := cfg.IndexPage(repo, summaries)
+		summary, err := cfg.IndexPage(repo, outputDirectory, summaries)
 		if err != nil {
 			log.Fatal(err)
 		}
