@@ -1,12 +1,12 @@
 # main.go
-## Language: 
-	Go
-## Purpose: 
-	This file serves as the entry point for a Go application, where it invokes a command execution function.
-## Important parts: 
-- The `main` function is the entry point and makes a call to `cmd.Execute()`, found at line 7. This suggests that the real logic is handled within the `cmd` package.
+## Language: Go (Golang)
+## Purpose:
+	This file serves as the entry point for a Go application, where it initializes and executes the application's primary functionality.
+## Important parts:
+	The main function on line 8 is the entry point for the program. Using `cmd.Execute()`, it calls a function (presumably from an imported package) to start the application's operations.
+
 ```go
-func main() {
-	cmd.Execute()
-}
+8	func main() {
+9	    cmd.Execute()
+10	}
 ```

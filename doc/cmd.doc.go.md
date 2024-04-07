@@ -1,30 +1,54 @@
 # cmd/doc.go
 ## Language: Go
 ## Purpose: 
-The file defines a command-line command that generates a summary document for a GitHub repository, excluding several common files and any files in hidden directories.
+	This file implements a Cobra command for generating a markdown document summary of a GitHub repository.
 
 ## Important parts: 
-- The `docCmd` variable holds the configuration for the `doc` command, which includes the command usage, a short description, and the logic to run the command (Lines 21-78).
-    ```go
-    var docCmd = &cobra.Command{ ... }
-    ```
-- The clone operation of the specified repository uses the go-git library (Lines 29-37).
-    ```go
-    r, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions{ ... })
-    ```
-- There's a filter logic to exclude specific files and files in hidden directories when iterating over the repository files (Lines 42-55).
-    ```go
-    for _, excluded := range excludedFiles { ... }
-    ```
-- The `FileToSummary` method is used to generate a summary for each file (Line 62).
-    ```go
-    summary, err := cfg.FileToSummary(internal.Chunk{Content: allLines})
-    ```
-- The file summaries are prepared and written out, and an index page (README.md) summarizing the repository content is also created (Lines 58-74).
-    ```go
-    err = ft.WriteFile(fileName, summary)
-    ```
-- The `init` function is used to set up the command flags and add the `doc` command to the `rootCmd` (Lines 80-85).
-    ```go
-    func init() { ... }
-    ```
+
+- Cobra Command Definition (line 21):
+	```go
+	var docCmd = &cobra.Command{
+		// ...
+		Run: func(cmd *cobra.Command, args []string) {
+			// Command's logic is implemented here
+		},
+	}
+	```
+	The `docCmd` variable is a Cobra command with a `Run` function containing the core logic.
+
+- Repository Cloning (line 28-34):
+	```go
+	log.Println("Cloning repository", repo)
+	r, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions{
+		URL: repo,
+	})
+	// Error handling omitted for brevity
+	```
+	Uses the `go-git` library to clone a GitHub repository into memory.
+
+- File Processing Loop (line 50-87):
+	```go
+	err = tree.Files().ForEach(func(f *object.File) error {
+		// Logic to process each file in the repository
+	})
+	// Error handling omitted for brevity
+	```
+	Iterates over the files in the repository, generating and writing summaries for each.
+
+- README Generation (line 89-96):
+	```go
+	log.Println("Creating README.md")
+	summary, err := cfg.IndexPage(repo, summaries)
+	// Error handling omitted for brevity
+	err = ft.WriteFile("README.md", summary)
+	```
+	Creates a `README.md` file with a summary generated from all processed files in the repository.
+
+- Cobra Command Initialization (line 98-102):
+	```go
+	func init() {
+		rootCmd.AddCommand(docCmd)
+		// Command arguments and flags setup
+	}
+	```
+	The `init` function registers `docCmd` as a subcommand of `rootCmd` and sets up necessary flags.

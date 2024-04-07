@@ -1,61 +1,27 @@
 # internal/library.go
 ## Language: Go
 ## Purpose: 
-	This file is designed as a utility library to interact with GitHub data, particularly pull requests (PRs), and to generate summaries using the OpenAI service.
+	The file defines a Go package responsible for interfacing with GitHub to fetch pull request (PR) details and diffs, and processing the data using the GPT model to generate summaries and other documentation aids.
 
 ## Important parts: 
-- Struct definitions for `PRDetail` (Line 14) and `Chunk` (Line 28) are used for storing PR details and code blocks respectively:
-	```go
-	type PRDetail struct {
-	  // struct fields
-	}
+1. **Struct Definitions (Lines 12-40):**
+   Structures `PRDetail`, `Chunk`, and `Config` are defined to hold information about pull request details, content chunks, and configuration settings, respectively.
 
-	type Chunk struct {
-	  Content string
-	}
-	```
+2. **GPT Interaction Methods (Lines 42-67, 69-91, 93-117, 119-146, 148-176):**
+   These methods (`getFromGPT`, `SummarizeSummary`, `ChunkToSummary`, `FileToSummary`, `IndexPage`) use a GPT client to generate different text outputs based on prompts configured within each method. They serve different summarization and content processing purposes, such as summarizing diffs, files and providing a repository index page.
 
-- Struct `Config` with methods to interact with the OpenAI service and GitHub:
-	```go
-	type Config struct {
-	  // config fields
-	}
+   Example from `getFromGPT` method:
+   ```go
+   client := openai.NewClient(cfg.GptAuth)
+   ```
+   
+3. **Diff Processing (Lines 178-216):**
+   The `splitDiff` function takes an `io.ReadCloser` as input, which likely represents the contents of a diff file, and processes it line by line to chunk the diffs accordingly.
 
-	func (cfg *Config) getFromGPT(prompt string) (string, error) {
-	  // interacts with OpenAI
-	}
+4. **GitHub PR Details and Diff Retrieval (Lines 218-261):**
+   Methods `GetDiff` and `GetPRDetail` are responsible for making HTTP requests to the GitHub API to fetch the diff and detailed information of a PR. The methods leverage Go's HTTP package to send the requests and process the responses.
 
-	func (cfg *Config) SummarizeSummary(summary string) (string, error) {
-	  // uses OpenAI to summarize a summary
-	}
-
-	func (cfg *Config) ChunkToSummary(chunk Chunk) (string, error) {
-	  // uses OpenAI to summarize chunks
-	}
-
-	func (cfg *Config) FileToSummary(chunk Chunk) (string, error) {
-	  // uses OpenAI to summarize a file
-	}
-
-	func (cfg *Config) IndexPage(title string, summaries []string) (string, error) {
-	  // uses OpenAI to generate an index page summary
-	}
-	```
-
-- `splitDiff` function that parses diff output and splits it into chunks (Line 144):
-	```go
-	func splitDiff(closer io.ReadCloser) ([]Chunk, error) {
-	  // code for splitting diffs
-	}
-	```
-
-- HTTP requests for getting the difference of a PR and the details of a PR (`GetDiff` on Line 168 and `GetPRDetail` on Line 194):
-	```go
-	func (cfg *Config) GetDiff(owner string, repo string, pr string) ([]Chunk, error) {
-	  // code to get PR diff
-	}
-
-	func (cfg *Config) GetPRDetail(owner string, repo string, pr string) (PRDetail, error) {
-	  // code to get PR details
-	}
-	```
+   Example from `GetPRDetail` method:
+   ```go
+   req, err := http.NewRequest("GET", "https://api.github.com/repos/"+owner+"/"+repo+"/pulls/"+pr, nil)
+   ```

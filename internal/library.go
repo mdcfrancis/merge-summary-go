@@ -121,7 +121,11 @@ func (cfg *Config) IndexPage(title string, summaries []string) (string, error) {
 		"   Summary: This file contains the main logic for the application",
 		"output the following structure:",
 		"	- a brief summary of the repository, include important information such as the purpose of the repository, the main technologies used, and the main features",
-		"	- for each summary in the repository, include a header with the file name and the type of change, including a relative link to the document and to the file",
+		"	- for each summary in the repository: ",
+		"		1) include a header with the file name and the type of change, ",
+		"		2) include a relative link to the file in the repository,",
+		"		3) include a relative link to the Doc File",
+		"	- include a link to the file in the header",
 	}
 	prompt = append(prompt, summaries...)
 	promptString := strings.Join(prompt, "\n")
