@@ -1,23 +1,46 @@
 ### Brief Summary of the Repository
+The repository `merge-summary-go` located at https://github.com/mdcfrancis/merge-summary-go appears to be a Go-based application designed to interact with GitHub repositories for the purpose of generating summaries for pull requests and their file changes. It leverages the OpenAI API to produce these summaries, suggesting the use of AI-driven natural language processing capabilities. The project includes a command-line interface (CLI) built with the Cobra library, allowing users to execute commands for generating documentation and summaries of GitHub repositories. The main features include cloning repositories, summarizing file changes (diffs), processing pull request details, and generating markdown formatted outputs.
 
-The repository `merge-summary-go` on GitHub, found at [mdcfrancis/merge-summary-go](https://github.com/mdcfrancis/merge-summary-go), is designed to automate the process of creating summarizations for pull request (PR) details and differences (diffs) in GitHub repositories. This automation is achieved using an AI model from the OpenAI API. The primary programming language used in this repository is Go (Golang). It provides features such as structuring PR details, handling diff content, and integrating API calls to generate markdown-formatted summaries that leverage the capabilities of GPT models provided by OpenAI.
+### Summaries in the Repository
 
-### Document Summaries in the Repository
+#### File: cmd/doc.go
+- **Type of change**: New command definition
+- **[Doc File](https://github.com/mdcfrancis/merge-summary-go/blob/main/cmd/doc.go.md)**
+- **[File](https://github.com/mdcfrancis/merge-summary-go/blob/main/cmd/doc.go)**
+- **Summary**: The `cmd/doc.go` file defines a CLI command, `docCmd`, that generates a summary document for GitHub repositories by cloning them and processing files to create an index page as README.md. It employs the `go-git` package for in-memory cloning and excludes specific files from the summarization process.
 
-#### File: `merger.go`
-- **Type of Change:** Main Logic Implementation
-- **[Doc File: merger.go.md](https://github.com/mdcfrancis/merge-summary-go/blob/main/merger.go.md)**
-- **[File: merger.go](https://github.com/mdcfrancis/merge-summary-go/blob/main/merger.go)**
+#### File: cmd/message.go
+- **Type of change**: New command definition
+- **[Doc File](https://github.com/mdcfrancis/merge-summary-go/blob/main/cmd/message.go.md)**
+- **[File](https://github.com/mdcfrancis/merge-summary-go/blob/main/cmd/message.go)**
+- **Summary**: The `cmd/message.go` file establishes a command, `messageCmd`, in a CLI application that retrieves and summarizes the differences in a pull request. It involves printing details of the pull request, fetching diffs, and producing a summarized output.
 
-**Summary:**
-`merger.go` serves as the core of the application, focusing on automating PR detail and diff summary generation for GitHub repositories using OpenAI's AI model. The script includes multiple structs and functions:
+#### File: cmd/root.go
+- **Type of change**: Base command setup
+- **[Doc File](https://github.com/mdcfrancis/merge-summary-go/blob/main/cmd/root.go.md)**
+- **[File](https://github.com/mdcfrancis/merge-summary-go/blob/main/cmd/root.go)**
+- **Summary**: The `cmd/root.go` file defines the base command for the CLI application, `rootCmd`, and configures command-line flags for various setup parameters like repository owner, repository name, and the GPT API key. The `Execute` function serves as the entry point for running the CLI application.
 
-- `PRDetail` struct, which defines the PR details structure.
-- `Chunk` struct, which holds sections of the diff content.
-- `getFromGPT` function, which communicates with the OpenAI API to get a summary from GPT.
-- `summarizeSummary` function, which formats the summary into markdown using the AI API.
-- `chunkToSummary` function, which transforms diff chunks into AI-powered summarized markdown text.
-- `splitDiff` function, which separates the raw diff content into distinct chunks.
-- `getDiff` function, which retrieves the diff from a GitHub PR as chunks.
-- `getPRDetail` function, which fetches the details of a GitHub PR.
-- The `main` function acts as the app’s entry point, where command-line parsing, PR detail retrieval, diff fetching, and summarization using AI API are executed, resulting in a combined summary output.
+#### File: merger.go
+- **Type of change**: Feature implementation
+- **[Doc File](https://github.com/mdcfrancis/merge-summary-go/blob/main/doc/merger.go.md.md)**
+- **[File](https://github.com/mdcfrancis/merge-summary-go/blob/main/doc/merger.go.md)**
+- **Summary**: The `merger.go` file is designed to automate the summarization of pull request details and diff content from GitHub repositories using the OpenAI API. It includes structures for holding PR details and diff chunks, functions interfacing with the AI API for generating summaries, and the program’s entry point which compiles summaries into a final document.
+
+#### File: internal/directory.go
+- **Type of change**: Utility development
+- **[Doc File](https://github.com/mdcfrancis/merge-summary-go/blob/main/internal/directory.go.md)**
+- **[File](https://github.com/mdcfrancis/merge-summary-go/blob/main/internal/directory.go)**
+- **Summary**: The file `internal/directory.go` contains utilities for directory operations, such as checking for a directory's existence, creating directories, and writing files with provided content.
+
+#### File: internal/library.go
+- **Type of change**: Library functionality
+- **[Doc File](https://github.com/mdcfrancis/merge-summary-go/blob/main/internal/library.go.md)**
+- **[File](https://github.com/mdcfrancis/merge-summary-go/blob/main/internal/library.go)**
+- **Summary**: In `internal/library.go`, GitHub API interactions are provided along with the functionality for splitting diffs into chunks and generating summaries using GPT models. This includes struct definitions, methods for AI-based summarization, and methods to fetch details from GitHub.
+
+#### File: main.go
+- **Type of change**: Application entry point
+- **[Doc File](https://github.com/mdcfrancis/merge-summary-go/blob/main/main.go.md)**
+- **[File](https://github.com/mdcfrancis/merge-summary-go/blob/main/main.go)**
+- **Summary**: The `main.go` file is the entry point of the Go application, where the `main` function invokes `cmd.Execute()` to start the CLI application.
