@@ -124,14 +124,14 @@ func (cfg *Config) IndexPage(title string, doc string, summaries []string) (stri
 		"	- a brief summary of the repository, include important information such as the purpose of the repository, the main technologies used, and the main features",
 		"	- for each summary in the repository: ",
 		"		1) include a header with the file name",
-		"		2) include a link to the file in the repository (Important this is a relative link)",
-		"		3) include a link to the Doc File, in the " + doc + " directory (Important this is a relative link)",
+		"		2) include a link to the file in the repository ",
+		"		3) include a link to the Doc File, in the " + doc + " directory",
 		"for example the output file should look like :",
 		"# Repository example",
 		"	- This repository contains the main logic for the application...",
 		"## example.go",
-		"	- [View file in repository](/example.go)",
-		"	- [View Doc File](/doc/example.go.md)",
+		"	- [View file in repository](https://github.com/example/example/example.go)",
+		"	- [View Doc File](https://github.com/example/example/doc/example.go.md)",
 		"	- This file contains the main logic for the application...",
 	}
 	prompt = append(prompt, summaries...)

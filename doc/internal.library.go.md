@@ -1,22 +1,33 @@
 # internal/library.go
 ## Language: Go
 ## Purpose: 
-The file defines a Go package within the 'internal' directory, intended to provide functionality for interacting with both GitHub's API (fetching pull request details and diffs) and with OpenAI's GPT models (summarizing code, diffs, and summaries). It includes data structures to represent pull request details and textual chunks, as well as functions for fetching GitHub data, processing diffs, and generating summaries with AI.
-
-## Important parts:
-- `PRDetail` struct (Lines 13-23): Data structure to represent details of a GitHub pull request.
-- `Chunk` struct (Lines 25-27): Represents a block of text, such as a diff.
-- `Config` struct (Lines 29-32): Holds configuration, such as whether to provide qualitative analysis or authentication for OpenAI's GPT models.
-- `getFromGPT` method (Lines 34-57): Uses the OpenAI client to generate completion from a given prompt using GPT models.
-- `SummarizeSummary`, `ChunkToSummary`, `FileToSummary`, `IndexPage` methods (Lines 59-128): Functions to summarize different types of inputs with prompts structured for the GPT model.
-- `splitDiff` function (Lines 130-156): Splits the diff text into separate chunks.
-- `GetDiff` and `GetPRDetail` methods (Lines 158-200): Fetch details and diffs from GitHub for a particular pull request.
-
-Some snippets from the code:
-```go
-type PRDetail struct { ... } // Struct definition for PR Detail (Line 13)
-
-client := openai.NewClient(cfg.GptAuth) // Creating a new OpenAI client with authentication (Line 36)
-
-chunks, err := splitDiff(resp.Body) // Splitting the body of the response into chunks (Line 194)
-```
+	The file serves as a library for processing GitHub Pull Requests (PRs) and summarizing them using an AI model.
+## Important parts: 
+	- Definition of types `PRDetail` (Line 14), `Chunk` (Line 28), and `Config` (Line 31).
+	- Function `getFromGPT` (Line 38): Sends a prompt to an AI model and gets a response.
+		```go
+		resp, err := client.CreateChatCompletion(
+			context.Background(),
+			openai.ChatCompletionRequest{
+				// ...
+			},
+		)
+		```
+	- Function `SummarizeSummary` (Line 55): Formats a summary using the AI model based on a given prompt.
+	- Function `ChunkToSummary` (Line 69): Turns a given chunk of text into a summary.
+	- Function `FileToSummary` (Line 86): Outputs formatted markdown for a file summary from the AI model.
+	- Function `IndexPage` (Line 109): Creates an index page summary with a list of file summaries.
+	- Function `splitDiff` (Line 135): Splits the diff from a pull request body into chunks.
+		```go
+		if strings.HasPrefix(line, "diff --git") {
+			// ...
+		}
+		```
+	- Function `GetDiff` (Line 165): Retrieves the diff from a GitHub PR.
+		```go
+		req, err := http.NewRequest("GET", "https://api.github.com/repos/"+owner+"/"+repo+"/pulls/"+pr, nil)
+		```
+	- Function `GetPRDetail` (Line 185): Fetches details of a GitHub PR.
+		```go
+		err = json.Unmarshal(body, &prDetail)
+		```

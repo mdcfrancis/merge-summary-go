@@ -1,37 +1,28 @@
 # cmd/doc.go
 ## Language: Go
-## Purpose:
-This file defines a command for a CLI application that, given a GitHub repository owner and name, clones the repository into memory and generates a summary document for each file within the repository, excluding certain files. Then it creates a `README.md` file with an indexed summary of all processed files in a specified output directory.
+## Purpose: 
+	The file defines a command for generating summary documents of a Git repository, which includes processing and filtering of the files and outputs a `README.md` as an index of summaries.
 
-## Important parts:
-- The variable `docCmd` (line 21) represents the custom 'doc' command built using the `cobra` library. This command defines how to generate summaries by interacting with a GitHub repository.
-  
+## Important parts: 
+- Declaration and initial setup of the `docCmd` cobra command (lines 18-78):
   ```go
   var docCmd = &cobra.Command{...}
   ```
-  
-- The `Run` function (line 31) encapsulates the command's logic: cloning the repository, iterating over the files in the repository's latest commit excluding any unwanted files, generating summaries, and writing them to the output directory.
-
+- Clone operation for the Git repository from a constructed URL (lines 27-34):
   ```go
-  Run: func(cmd *cobra.Command, args []string) { ... }
+  r, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions{ URL: repo })
   ```
-  
-- The `git.Clone` function (line 38) is used for cloning the repository into memory storage:
-
+- Filtering of certain files and directories to exclude from processing (lines 50-60).
+- Processing each file in the repository to generate summaries (lines 62-82):
   ```go
-  r, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions{URL: repo})
+  err = tree.Files().ForEach(func(f *object.File) error {...})
   ```
-  
-- The `CheckOrCreateDirectory` function (line 63) and `WriteFile` function (line 91) from `internal.FileTools` are called to ensure the output directory exists and to write the generated summaries to disk, respectively.
-  
+- Writing the summaries to the specified output directory and the creation of `README.md` (lines 84-97).
+- Declaration of the global variable `outputDirectory` and flag setup for the `docCmd` (lines 80-88):
   ```go
-  err = ft.CheckOrCreateDirectory()
-  // ...
-  err = ft.WriteFile(fileName, summary)
+  var outputDirectory string
   ```
-
-- The `init` function (line 101) registers the `docCmd` with the root command of the CLI application and sets up the required flags. The `outputDirectory` variable is bound to the 'output' flag to determine where the summaries should be saved.
-
+- Registration of the `docCmd` with the root command in the `init` function (lines 90-93):
   ```go
-  func init() { ... }
+  rootCmd.AddCommand(docCmd)
   ```
