@@ -59,7 +59,7 @@ var docCmd = &cobra.Command{
 		summaries := []string{}
 		err = tree.Files().ForEach(func(f *object.File) error {
 			for _, excluded := range excludedFiles {
-				if f.Name == excluded {
+				if strings.HasSuffix(f.Name, excluded) {
 					return nil
 				}
 			}
