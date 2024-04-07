@@ -1,28 +1,28 @@
-File name: cmd/message.go
-Language: Go
-Purpose: The file defines a command for a CLI application to retrieve and summarize the differences in a pull request.
-Important parts:
-- The `messageCmd` variable declaration, which creates a new cobra command (line 13):
+# cmd/message.go
+## Language: Go
+## Purpose: 
+	This file defines a command-line command for summarizing the changes from a pull request (PR) into a message.
+## Important parts: 
+- Definition of `messageCmd`: A variable which holds the structure of the 'message' command, including its usage, description, and the execution logic (lines 9-45).
+  
+  ```go
+  var messageCmd = &cobra.Command{
+      // ...
+  }
+  ```
 
-```go
-var messageCmd = &cobra.Command{
-	...
-}
-```
+- The `Run` function within `messageCmd`: It retrieves the PR details and diffs, generates a summary of the changes, and prints it out (lines 19-44).
 
-- Inside the `messageCmd`, the `Run` function details the steps to print pull request details, fetch diffs, summarize them, and print the final summary (lines 22-58):
+  ```go
+  Run: func(cmd *cobra.Command, args []string) {
+      // ...
+  }
+  ```
 
-```go
-Run: func(cmd *cobra.Command, args []string) {
-	...
-}
-```
+- Initialization of the command: The `init` function adds `messageCmd` to the root command and sets up a flag to toggle qualitative summarization (lines 47-51).
 
-- Initialization function `init` adds the `messageCmd` to the root command and sets up a flag for qualitative summarization (lines 60-63):
-
-```go
-func init() {
-	rootCmd.AddCommand(messageCmd)
-	...
-}
-```
+  ```go
+  func init() {
+      // ...
+  }
+  ```

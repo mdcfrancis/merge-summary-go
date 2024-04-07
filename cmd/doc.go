@@ -49,7 +49,7 @@ var docCmd = &cobra.Command{
 			GptAuth: gptAuth,
 		}
 
-		excludedFiles := []string{"go.sum", "go.mod", "LICENSE", "README.md", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md", "PULL_REQUEST_TEMPLATE.md", "ISSUE_TEMPLATE.md"}
+		excludedFiles := []string{"go.sum", "go.mod", "LICENSE", ".md"}
 
 		ft := internal.FileTools{
 			Directory: outputDirectory,

@@ -1,9 +1,61 @@
-File name: internal/library.go
-Language: Go
-Purpose: This file provides functionality for interacting with GitHub APIs to fetch pull request details, divide diffs into chunks, and generate summaries using GPT (AI) models.
-Important parts:
-- Structure definitions for `PRDetail` (lines 16-25) and `Chunk` (lines 27-29), which hold pull request details and content chunks respectively.
-- `Config` struct and methods to generate summaries using GPT (lines 31-118), like `getFromGPT` for fetching responses from GPT (lines 33-50), and `FileToSummary` method that formats a file's content into a structured summary (lines 90-109).
-- `IndexPage` method to generate a summary page for the repository (lines 110-127).
-- Utilizing `splitDiff` function to break up diff outputs into chunks (lines 129-164).
-- Network requests are made to the GitHub API to fetch diffs (`GetDiff` at lines 166-190) and pull request details (`GetPRDetail` at lines 192-219).
+# internal/library.go
+## Language: Go
+## Purpose: 
+	This file is designed as a utility library to interact with GitHub data, particularly pull requests (PRs), and to generate summaries using the OpenAI service.
+
+## Important parts: 
+- Struct definitions for `PRDetail` (Line 14) and `Chunk` (Line 28) are used for storing PR details and code blocks respectively:
+	```go
+	type PRDetail struct {
+	  // struct fields
+	}
+
+	type Chunk struct {
+	  Content string
+	}
+	```
+
+- Struct `Config` with methods to interact with the OpenAI service and GitHub:
+	```go
+	type Config struct {
+	  // config fields
+	}
+
+	func (cfg *Config) getFromGPT(prompt string) (string, error) {
+	  // interacts with OpenAI
+	}
+
+	func (cfg *Config) SummarizeSummary(summary string) (string, error) {
+	  // uses OpenAI to summarize a summary
+	}
+
+	func (cfg *Config) ChunkToSummary(chunk Chunk) (string, error) {
+	  // uses OpenAI to summarize chunks
+	}
+
+	func (cfg *Config) FileToSummary(chunk Chunk) (string, error) {
+	  // uses OpenAI to summarize a file
+	}
+
+	func (cfg *Config) IndexPage(title string, summaries []string) (string, error) {
+	  // uses OpenAI to generate an index page summary
+	}
+	```
+
+- `splitDiff` function that parses diff output and splits it into chunks (Line 144):
+	```go
+	func splitDiff(closer io.ReadCloser) ([]Chunk, error) {
+	  // code for splitting diffs
+	}
+	```
+
+- HTTP requests for getting the difference of a PR and the details of a PR (`GetDiff` on Line 168 and `GetPRDetail` on Line 194):
+	```go
+	func (cfg *Config) GetDiff(owner string, repo string, pr string) ([]Chunk, error) {
+	  // code to get PR diff
+	}
+
+	func (cfg *Config) GetPRDetail(owner string, repo string, pr string) (PRDetail, error) {
+	  // code to get PR details
+	}
+	```

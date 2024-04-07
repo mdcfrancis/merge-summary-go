@@ -1,7 +1,26 @@
-File Name: internal/directory.go
-Language: Go
-Purpose: This file provides utilities for directory operations, specifically checking for the existence of a directory and creating it if necessary, as well as writing files to a directory.
-Important Parts: 
-- The `FileTools` struct is defined to handle directory operations with the `Directory` attribute (line 7).
-- The `CheckOrCreateDirectory` method checks for the existence of a directory and creates it if it doesn't exist, generating an error if the directory field is empty (lines 12-20).
-- The `WriteFile` method is responsible for writing a file with given content to a directory, constructing a file path by concatenating `Directory` and `fileName` (lines 22-27).
+# internal/directory.go
+## Language: Go
+## Purpose:
+The purpose of this Go file is to provide functionalities for working with directories, such as ensuring a directory exists or creating it if necessary, and writing files to a specified directory.
+
+## Important parts:
+- Struct Definition: Defines a `FileTools` struct with a `Directory` field to store the path of a directory.
+  ```go
+  type FileTools struct {
+      Directory string
+  }
+  ```
+
+- CheckOrCreateDirectory Method (Line 13): This method checks if the `Directory` exists, and if not, it creates the directory with proper file permissions. This function returns an error if the `Directory` field is empty.
+  ```go
+  func (f FileTools) CheckOrCreateDirectory() error {
+      // ... implementation ...
+  }
+  ```
+
+- WriteFile method (Line 22): This method takes a file name and content (`summary`) as parameters and writes the file to the `Directory` specified in the `FileTools` struct.
+  ```go
+  func (f FileTools) WriteFile(fileName, summary string) error {
+      // ... implementation ...
+  }
+  ```
