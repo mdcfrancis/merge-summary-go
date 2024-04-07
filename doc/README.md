@@ -1,37 +1,32 @@
-# Repository https://github.com/mdcfrancis/merge-summary-go
-- The repository at https://github.com/mdcfrancis/merge-summary-go is designed for summarizing GitHub pull requests using Go. It contains several Go files and documentation files that work together to facilitate the extraction of PR details and generate summaries with the help of an AI model. The use of the Cobra library for CLI operations is a key component of the repository, which suggests that the repository's functionality is available as a command-line tool.
+# Repository [merge-summary-go](https://github.com/mdcfrancis/merge-summary-go)
+- This repository contains an application developed in Go, designed to provide command-line interface tools for documenting, reviewing, and summarizing pull requests on GitHub. It leverages tools such as Cobra for command-line structure and OpenAI's API for summarization tasks.
 
-## `example.go`
-- [View file in repository](https://github.com/mdcfrancis/merge-summary-go/blob/main/example.go)
-- [View Doc File](https://github.com/mdcfrancis/merge-summary-go/blob/main/doc/example.go.md)
-- This file contains the main logic for the application.
+## cmd/doc.go
+- [View file in repository](../cmd/doc.go)
+- [View Doc File](../doc/cmd.doc.go.md)
+- This file implements the 'doc' command to generate summary documents for GitHub repos, with functionality for cloning repositories, filtering files, processing content, and writing summaries.
 
-## `cmd/doc.go`
-- [View file in repository](https://github.com/mdcfrancis/merge-summary-go/blob/main/cmd/doc.go)
-- [View Doc File](https://github.com/mdcfrancis/merge-summary-go/blob/main/doc/cmd.doc.go.md)
-- The file `cmd/doc.go` is part of a CLI tool and is responsible for generating documentation summaries for files in a git repository. Key operations include cloning a repository, filtering files for processing, generating summaries, and writing them to a README.md file.
+## cmd/message.go
+- [View file in repository](../cmd/message.go)
+- [View Doc File](../doc/cmd.message.go.md)
+- This file defines a command-line command to retrieve and provide summaries of GitHub Pull Requests, using Cobra commands and various parsing and summarization functions.
 
-## `cmd/message.go`
-- [View file in repository](https://github.com/mdcfrancis/merge-summary-go/blob/main/cmd/message.go)
-- [View Doc File](https://github.com/mdcfrancis/merge-summary-go/blob/main/doc/cmd.message.go.md)
-- The `cmd/message.go` file defines a command-line functionality for fetching details from a pull request on GitHub and creating a summarized message based on that information. It encapsulates this logic through Cobra command configurations and associated functions.
+## cmd/root.go
+- [View file in repository](../cmd/root.go)
+- [View Doc File](../doc/cmd.root.go.md)
+- This file sets up the command-line interface for the tool and is central in defining the base 'merge-summary-go' command and parsing command-line flags.
 
-## `cmd/root.go`
-- [View file in repository](https://github.com/mdcfrancis/merge-summary-go/blob/main/cmd/root.go)
-- [View Doc File](https://github.com/mdcfrancis/merge-summary-go/blob/main/doc/cmd.root.go.md)
-- Serving as the foundation for the command-line application, `cmd/root.go` sets up the base `cobra.Command` and includes configurations for the command-line interface, including execution, definition of global flags, and initialization of the command structure.
+## internal/directory.go
+- [View file in repository](../internal/directory.go)
+- [View Doc File](../doc/internal.directory.go.md)
+- The file focuses on directory operations such as checking directory existence, creating directories, and writing files to the specified directory.
 
-## `internal/directory.go`
-- [View file in repository](https://github.com/mdcfrancis/merge-summary-go/blob/main/internal/directory.go)
-- [View Doc File](https://github.com/mdcfrancis/merge-summary-go/blob/main/doc/internal.directory.go.md)
-- The `internal/directory.go` file offers utilities for file system operations within the application, such as checking for directory existence, creating a new directory, and writing files. It is primarily centered around the `FileTools` struct which encapsulates these capabilities.
+## internal/library.go
+- [View file in repository](../internal/library.go)
+- [View Doc File](../doc/internal.library.go.md)
+- This file provides a collection of functions for interacting with GitHub APIs, parsing PR diffs, and communicating with the OpenAI API to produce summaries for PRs and code changes.
 
-## `internal/library.go`
-- [View file in repository](https://github.com/mdcfrancis/merge-summary-go/blob/main/internal/library.go)
-- [View Doc File](https://github.com/mdcfrancis/merge-summary-go/blob/main/doc/internal.library.go.md)
-- Aimed at processing and summarizing GitHub pull requests, the `internal/library.go` file is essentially a collection of functions and types that cooperate to fetch PR details, communicate with an AI model to process these details, and generate summaries and markdown indices.
-
-## `main.go`
-- [View file in repository](https://github.com/mdcfrancis/merge-summary-go/blob/main/main.go)
-- [View Doc File](https://github.com/mdcfrancis/merge-summary-go/blob/main/doc/main.go.md)
-- The entry point of the repository's Go application is defined in `main.go`, where the `main` function calls `Execute` to start the command-line tool provided by the package defined in other parts of the repository.
+## main.go
+- [View file in repository](../main.go)
+- [View Doc File](../doc/main.go.md)
+- The file is the entry point for the Go application, initiating the application's command-line interface execution process.

@@ -1,11 +1,9 @@
 # cmd/root.go
 ## Language: Go
 ## Purpose: 
-	This file serves as the main command setup for a CLI application, providing a framework to add subcommands related to summarizing PRs on GitHub.
+	This file establishes the command-line interface structure for a tool designed to summarize pull requests on GitHub.
 ## Important parts: 
-- Declaration of the base command:
-	The variable `rootCmd` is initiated as a `cobra.Command` struct which forms the base for the application's command-line interface. (Lines 10-13)
-
+	- The `rootCmd` variable (Line 11): defines the base command with its usage, description, and long description.
 	```go
 	var rootCmd = &cobra.Command{
 		Use:   "merge-summary-go",
@@ -13,10 +11,7 @@
 		Long:  `A set of tools to summarise PRs on GitHub.`,
 	}
 	```
-
-- Execution function:
-	The `Execute` function, which is called by the package's `main` function, is responsible for invoking the command-line interface and handling any errors that occur during its execution. (Lines 17-23)
-
+	- The `Execute` function (Line 18): is the entry point to execute the base command which includes error handling.
 	```go
 	func Execute() {
 		err := rootCmd.Execute()
@@ -25,10 +20,8 @@
 		}
 	}
 	```
-
-- Command flag initialization:
-	In the `init` function, the code defines flags for the `rootCmd` to accept command-line arguments for the repository owner, repository name, and GPT API key. These inputs default to specified values or the `GPT_AUTH` environment variable. (Lines 25-39)
-
+	- Global variables (Lines 22-24): store command-line flag values such as the repository owner, repository name, and GPT API key.
+	- The `init` function (Line 26): initializes the command-line flags with default values and specifies how to parse them.
 	```go
 	func init() {
 		rootCmd.Flags().StringVarP(&repoOwner, "owner", "o", "mdcfrancis", "The owner of the repository")
