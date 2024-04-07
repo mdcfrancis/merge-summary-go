@@ -1,29 +1,24 @@
 # internal/directory.go
 ## Language: Go
-## Purpose:
-	This file provides a structure and associated methods to handle common file system operations such as checking for the existence of a directory or creating one if it doesn't exist, as well as writing content to a file within a directory.
+## Purpose: 
+	The file defines a struct and methods for handling directory-related operations such as checking for the existence of a directory and creating it if necessary, as well as writing files to a directory.
 
 ## Important parts:
-- A `FileTools` struct is defined with a `Directory` as its field, to encapsulate operations related to a directory:
-```go
-type FileTools struct {
-	Directory string
-}
-```
-(Line 8)
-
-- The `CheckOrCreateDirectory` method checks if the `Directory` field of a `FileTools` struct is set and attempts to create the directory if it does not exist. It can create directories recursively if required:
-```go
-func (f FileTools) CheckOrCreateDirectory() error {
-	// ...
-}
-```
-(Line 13)
-
-- The `WriteFile` method writes a file with a given name and content to the directory specified by the `Directory` field of a `FileTools` struct:
-```go
-func (f FileTools) WriteFile(fileName, summary string) error {
-	// ...
-}
-```
-(Line 22)
+- The `FileTools` struct (line 8) holds information regarding the directory that will be operated on.
+	```go
+	type FileTools struct {
+		Directory string
+	}
+	```
+- The `CheckOrCreateDirectory` method (line 14) checks whether the Directory field of FileTools is empty, returns an error if it is, or attempts to create the directory including all necessary parent directories with the appropriate permissions.
+	```go
+	func (f FileTools) CheckOrCreateDirectory() error {
+		...
+	}
+	```
+- The `WriteFile` method (line 21) is designed to write text content to a file with the specified `fileName` within the `Directory` specified by the FileTools struct. It handles the creation of the file and ensures the content is written with the appropriate file permissions.
+	```go
+	func (f FileTools) WriteFile(fileName, summary string) error {
+		...
+	}
+	```

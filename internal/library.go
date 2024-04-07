@@ -126,13 +126,17 @@ func (cfg *Config) IndexPage(title string, doc string, summaries []string) (stri
 		"		1) include a header with the file name",
 		"		2) include a link to the file in the repository ",
 		"		3) include a link to the Doc File, in the " + doc + " directory",
-		"for example the output file should look like :",
-		"# Repository example",
-		"	- This repository contains the main logic for the application...",
+		"for a repository located at https://github.com/example/example with a single file example.go ",
+		" and the documents in the 'doc' directory the output should look like :",
+		"# Repository [example](https://github.com/example/example) ",
+		"	- This repository contains the example application...",
 		"## example.go",
-		"	- [View file in repository](https://github.com/example/example/example.go)",
-		"	- [View Doc File](https://github.com/example/example/doc/example.go.md)",
+		"	- [View file in repository](../example/example/example.go)",
+		"	- [View Doc File](example.go.md)",
 		"	- This file contains the main logic for the application...",
+		"make sure you do not include any personal information in the output",
+		"make sure you do not include the example in the output",
+		"ensure the links are relative, if the documents are not in a top level directory than include the correct number of ../ in the relative links",
 	}
 	prompt = append(prompt, summaries...)
 	promptString := strings.Join(prompt, "\n")

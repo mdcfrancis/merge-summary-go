@@ -1,28 +1,49 @@
 # cmd/doc.go
 ## Language: Go
 ## Purpose: 
-	The file defines a command for generating summary documents of a Git repository, which includes processing and filtering of the files and outputs a `README.md` as an index of summaries.
-
+	This file defines the 'doc' command for a CLI application, which generates a summary document for a given GitHub repository. The summary includes file names, paths, and content summaries.
 ## Important parts: 
-- Declaration and initial setup of the `docCmd` cobra command (lines 18-78):
-  ```go
-  var docCmd = &cobra.Command{...}
-  ```
-- Clone operation for the Git repository from a constructed URL (lines 27-34):
-  ```go
-  r, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions{ URL: repo })
-  ```
-- Filtering of certain files and directories to exclude from processing (lines 50-60).
-- Processing each file in the repository to generate summaries (lines 62-82):
-  ```go
-  err = tree.Files().ForEach(func(f *object.File) error {...})
-  ```
-- Writing the summaries to the specified output directory and the creation of `README.md` (lines 84-97).
-- Declaration of the global variable `outputDirectory` and flag setup for the `docCmd` (lines 80-88):
-  ```go
-  var outputDirectory string
-  ```
-- Registration of the `docCmd` with the root command in the `init` function (lines 90-93):
-  ```go
-  rootCmd.AddCommand(docCmd)
-  ```
+- The `docCmd` variable (line 19) is a Cobra command with usage instructions, which performs the main operations when the 'doc' command is run. It clones a repository, processes its files, and generates summaries.
+  
+    ```go
+    var docCmd = &cobra.Command{
+        // ...
+        Run: func(cmd *cobra.Command, args []string) {
+            // Implementation details...
+        },
+    }
+    ```
+
+- Repository cloning process (line 28), which clones a Git repository into memory:
+
+    ```go
+    r, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions{
+        URL: repo,
+    })
+    ```
+
+- File filtering and processing (line 59-85), where files like 'go.sum', 'go.mod', 'LICENSE', and '.md' are excluded, and each file is processed to create the summary.
+
+    ```go
+    err = tree.Files().ForEach(func(f *object.File) error {
+        // Exclusion and processing logic...
+    })
+    ```
+
+- Writing summaries to files and creation of 'README.md' (line 78, 92) by using functions like `ft.WriteFile` to generate documentation files for the processed repository.
+
+    ```go
+    err = ft.WriteFile(fileName, summary)
+    // ...
+    err = ft.WriteFile("README.md", summary)
+    ```
+
+- Initialization of the `docCmd` with required flags (line 97) to specify command arguments such as the output directory.
+
+    ```go
+    func init() {
+        // ...
+        docCmd.Flags().StringVarP(&outputDirectory, "output", "o", "", "The directory to output the summary")
+        docCmd.MarkFlagRequired("output")
+    }
+    ```
